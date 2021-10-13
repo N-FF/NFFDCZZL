@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>css</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        .wrapper {
+            display: grid;
+            width: 100%;
+            height: 100vh;
+            background-color: #ffbe00;
+            /* 网格布局，共三列，宽度都是自动的 */
+            grid-template-columns: auto auto auto;
+        }
+        /* 在根元素选择器中定义全局变量,在任何一个选择器中都可以通过函数的方式进行调用，重复使用 */
+        :root {
+            --color1: #ce7253;
+            --color2:#a04e3a;
+            --hair:#90503a;
+            --beard:#673929;
+        }
+        /* 绘制人的头像 */
+        .head {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            width: 220px;
+            height: 310px;
+            background-color: var(--color1);
+            transform: translate(-50%,-50%); 
+            border-radius: 110px;
+            /* 宽度的一半作为像素值 */
+            box-shadow:inset 0 60px var(--hair),inset 0 -40px var(--beard);
+            /* inset是为了头发是在内部，如果没有这个关键字这部分阴影就会在下面，0表示不用水平移动，60px是表示向上移动60px，var（--hair）引用颜色 */
+        }
+        /* 为元素绘制脸部轮廓，以及底下的投影 */
+        /* ::before伪元素选择器，在元素内部最顶部添加一个虚拟的自己 */
+        .head::before{
+            /* 在脸部中间添加一个盒子用来放置五官 */
+            /* 伪元素默认是行内元素的加载模式，伪元素必须添加一个内容属性 ,content是用来添加伪元素里面内容的属性，里面可以什么都不写为空也可以，但是没有这个属性伪元素就会创建失败*/
+            content: '';
+            /* 默认是一个行内元素，要是想变成一个块元素就要设置display:block,若想定位脱标就设置一些定位的属性 */
+            position: absolute;
+            /* 父级是固定定位，自己是绝对定位它就会参考父级的移动 */
+            left: 0;
+            top: 50px;
+            /* 在父级元素头发的下面，头发是60px，那就设置这个是50px */
+            width: 220px;
+            /* 和脸的宽度一样 */
+            height: 220px;
+            /* 高度要比脸部小 */
+            background-color: var(--color1);
+            border-radius: 60px 60px 110px 110px;
+            /* 设置压盖级别 */
+            z-index: 2;
+            /* 以动画的效果移动元素使用transition属性 */
+            transition: all 0.3s ease-in;
+        }
+        .head::after{
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: -80px;
+            width: 140px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: orange;
+            transform: translate(-50%);
+        }
+        /* 耳朵，定位在脸的后面，被脸遮住了 */
+        .ear{
+            position: absolute;
+            top: 127px;
+            width: 55px;
+            height: 55px;
+            background-color: var(--color1);
+            border-radius: 50%;
+            transition: all 0.3s ease-in;
+        }
+        .ear_l{
+            left: -28px;
+        }
+        .ear_r{
+            right: -28px;
+            /* 命名和移动方向相同的话就用负值 */
+        }
+        .ear::before{
+            content: '';
+            position: absolute;
+            left: 50%;
+            width: 26px;
+            height: 26px;
+            top: 12px;
+            /* 从上往下走的少一些为12px那么元素就会靠上面一些 */
+            transform: translate(-50%);
+            /* 每次让left值为50%的时候使用tansform让它拽回来一半就行 */
+            background-color: var(--color2);
+            border-radius: 50%;
+        }
+        .ear::after{
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            bottom: 6px;
+            /* 从下往上走6px */
+            background-color: white;
+            border-radius: 50%;
+        }
+        .ear_l::after{
+            /* 从左往右走 */
+            left: 13px;
+        }
+        .ear_r::after{
+            /* 从右往左走 */
+            right: 13px;
+        }
+        /* 设置整个脸部的五官区域 */
+        .face {
+            position: absolute;
+            left: 50%;
+            top: 105px;
+            /* 脸部五官距离头顶向下走了105px */
+            width: 110px;
+            /* 内部的face占据父级宽度的一半 */
+            height: 165px;
+            /* 眉毛到下巴的部分 */
+            transform: translate(-50%);
+            /* 往回拽自身的一半 */
+            z-index: 3;
+            /* 让五官压盖在脸部上方 */
+            transition: all 0.3s ease-in;
+        }
+        /* 眼睛中的眉毛 */
+        .eye {
+            position: absolute;
+            top: 4px;
+            width: 38px;
+            height: 8px;
+            background-color: #000;
+            border-radius: 4px;
+        }
+        /* 分别设置两个左右为0的目的是让眉毛一个贴着左边一个贴着右边 */
+        .eye_l{
+            left: 0;
+        }
+        .eye_r{
+            right: 0;
+        }
+        /* 伪元素做眼珠子 */
+        .eye::before{
+            content: '';
+            position: absolute;
+            left: 50%;
+            /* 让它从眉毛往下走18px */
+            top: 18px;
+            height: 16px;
+            width: 16px;
+            /* 眼珠子是圆形所以设置为50% */
+            border-radius: 50%;
+            background-color: black;
+            transform: translate(-50%);
+            transition: all 0.3s ease-in;
+        }
+        /* 鼻子 */
+        .nose {
+            position: absolute;
+            left: 50%;
+            top: 50px;
+            width: 64px;
+            height: 22px;
+            border-radius: 11px;
+            background-color: var(--color2);
+            transform: translate(-50%);
+            z-index: 5;
+            /* 为了在向上看的过程中不会将鼻子挡住，所以要提高一个压盖层级 */
+        }
+        /* 使用伪元素设置鼻头 */
+        .nose::before{
+            content: '';
+            position: absolute;
+            left: 50%;
+            /* 往上面走8px */
+            top: -6px;
+            height: 22px;
+            width: 22px;
+            border-radius: 50%;
+            background-color: var(--color2);
+            transform: translate(-50%);
+        }
+        /* 胡子 */
+        .beard {
+            position: absolute;
+            /* 从五官的盒子顶部向下走80px */
+            top: 80px;
+            left: 50%;
+            /* 宽度不会超过五官的宽度 */
+            width: 90px;
+            height: 120px;
+            border-radius: 45px;
+            background-color: #000;
+            transform: translate(-50%);
+            transition: all 0.3s ease-in;
+        }
+        /* 胡子上面的小圆 */
+        .beard::before{
+            content: '';
+            position: absolute;
+            left: 50%;
+            /* 往上面走8px */
+            top: -8px;
+            height: 22px;
+            width: 22px;
+            border-radius: 50%;
+            background-color: var(--color1);
+            transform: translate(-50%);
+        }
+        /* 下巴 */
+        .chin {
+            position: absolute;
+            /* 从胡子的盒子顶部向下走80px */
+            top: 20px;
+            left: 50%;
+            /* 宽度不会超过胡子的宽度 */
+            width: 74px;
+            height: 64px;
+            border-radius: 32px;
+            background-color:var(--color1);
+            transform: translate(-50%);
+        }
+        /* 嘴巴使用伪元素进行添加 */
+        .chin::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            /* 嘴巴从嘴巴区域往下面走8px */
+            top: 8px;
+            width: 44px;
+            height: 20px;
+            border-radius: 0 0 22px 22px;
+            background-color: white;
+            transform: translate(-50%);
+        }
+        /* 嘴巴下边的小胡子 */
+        .beard::after{
+            content: '';
+            position: absolute;
+            left: 50%;
+            /* 往下面走60px */
+            top: 60px;
+            height: 10px;
+            width: 20px;
+            border-radius: 4px;
+            background-color: #000;
+            transform: translate(-50%);
+        }
+        /* 给鼠标移上的四个方向的类名设置hover伪类状态，让元素自己自行组合 */
+        .move.top:hover ~ .head::before {
+            /* 往上面走了，原来脸是50px */
+            top: 45px;
+        }
+        .move.top:hover ~ .head .face {
+            /* 往上面走了，原来是105px */
+            top: 90px;
+        }
+        .move.top:hover ~ .head .face .eye::before {
+            /* 往上面走了，原来是18px */
+            top: 8px;
+        }
+        .move.top:hover ~ .head .face .beard {
+            /* 往上面走了，原来脸是80px */
+            top: 74px;
+        }
+        .move.top:hover ~ .head .ear {
+            /* 往下面走了，原来是127px */
+            top: 132px;
+        }
+
+
+
+        .move.bottom:hover ~ .head::before {
+            /* 往下面走了，原来脸是50px */
+            top: 60px;
+        }
+        .move.bottom:hover ~ .head .face {
+            /* 往下面走了，原来是105px */
+            top: 125px;
+        }
+        .move.bottom:hover ~ .head .face .eye::before {
+            /* 往下面走了，原来是18px */
+            top: 28px;
+        }
+        .move.bottom:hover ~ .head .face .beard {
+            /* 往下面走了，原来脸是80px */
+            top: 86px;
+        }
+        .move.bottom:hover ~ .head .ear {
+            /* 往上面走了，原来是127px */
+            top: 122px;
+        }
+
+
+
+        .move.left:hover ~ .head .face {
+            /* 往左面走了，原来是50% */
+            left: 45%;
+        }
+        .move.left:hover ~ .head .face .eye::before {
+            /* 往左面走了，原来是50% */
+            left: 40%;
+        }
+        .move.left:hover ~ .head .ear_l {
+            /* 往左面走了，原来是-28px */
+            left: -23px;
+        }
+        .move.left:hover ~ .head .ear_r {
+            /* 往右面走了，原来是-28px */
+            right: -33px;
+        }
+
+
+
+        .move.right:hover ~ .head .face {
+            /* 往右面走了，原来是50% */
+            left: 55%;
+        }
+        .move.right:hover ~ .head .face .eye::before {
+            /* 往右面走了，原来是50% */
+            left: 60%;
+        }
+        .move.right:hover ~ .head .ear_l {
+            /* 往右面走了，原来是-28px */
+            left: -33px;
+        }
+        .move.right:hover ~ .head .ear_r {
+            /* 往左面走了，原来是-28px */
+            right: -23px;
+        }
+        </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="move top left"></div>
+        <div class="move top"></div>
+        <div class="move top right"></div>
+        <div class="move left"></div>
+        <div class="move"></div>
+        <div class="move right"></div>
+        <div class="move bottom left"></div>
+        <div class="move bottom"></div>
+        <div class="move bottom right"></div>
+        <div class="head">
+            <!-- 可以使用伪元素添加一些子级 -->
+            <!-- 设置公共样式，设置自己的样式 -->
+            <div class="ear ear_l"></div>
+            <div class="ear ear_r"></div>
+            <div class="face">
+                <div class="eye eye_l"></div>
+                <div class="eye eye_r"></div>
+                <div class="nose"></div>
+                <div class="beard">
+                    <div class="chin"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
